@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cdn
+spec:
+  selector:
+    app: cdn
+  ports:
+    - protocol: TCP
+      name: http
+      port: 4296
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: cdn
+  labels:
+    app: cdn
+spec:
+  replicas: 3
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: cdn
+  template:
+    metadata:
+      labels:
+        app: cdn
+    spec:
+      containers:
+        - name: cdn
+          image: docker.rikarin.org/cord/cdn
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /app/config.yaml
+              name: config
+              subPath: config.yaml
+            - mountPath: /resources
+              name: data
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 4296
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            timeoutSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 4296
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            timeoutSeconds: 3
+            
+      volumes:
+        - name: config
+          configMap:
+            name: cdn-config
+        - name: data
+          hostPath:
+            path: /mnt/cloud-data/cord-prod/cdn

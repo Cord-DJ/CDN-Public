@@ -1,0 +1,16 @@
+trigger:
+  batch: true
+
+resources:
+  repositories:
+    - repository: pipelines
+      type: git
+      name: Core/Pipelines
+
+extends:
+  template: pipeline-service.yaml@pipelines
+  parameters:
+    projects: CDN
+    dockerImage: cord/cdn
+    kubeNamespace: cord
+    sonarQubeProjectKey: 'Cord_CDN_AYd6auUk7OxwMG8eLKSK'

@@ -1,0 +1,24 @@
+logging:
+  elastic:
+    uri: "https://elasticsearch.internal.rikarin.org"
+  Serilog:
+    MinimumLevel: "Information"
+
+kestrel:
+  endpoints:
+    - url: http://0.0.0.0:4296
+      protocols: Http1
+
+authToken: ""
+  
+mongodb:
+  hostname: mongodb://admin:admin@mongo/
+  collection: cdn
+  
+cors:
+  origins:
+    - https://cord.local
+
+oauth:
+  issuer: https://cord.local/api/auth
+  
